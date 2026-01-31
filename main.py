@@ -120,10 +120,10 @@ app.mount("/js", StaticFiles(directory=str(frontend_dir / "js")), name="js")
 
 @app.get("/")
 async def root():
-    """Serve login page."""
-    login_html = frontend_dir / "login.html"
-    if login_html.exists():
-        return FileResponse(str(login_html))
+    """Serve chat interface as default page."""
+    chat_html = frontend_dir / "chat.html"
+    if chat_html.exists():
+        return FileResponse(str(chat_html))
     return {
         "name": settings.APP_NAME,
         "version": settings.APP_VERSION,

@@ -1,10 +1,10 @@
-// Utility functions
+// Utility functions - ES6 Module
 
-function formatDate(dateStr) {
+export function formatDate(dateStr) {
     return new Date(dateStr).toLocaleString();
 }
 
-function formatRelativeTime(dateStr) {
+export function formatRelativeTime(dateStr) {
     const now = new Date();
     const then = new Date(dateStr);
     const diffMs = now - then;
@@ -20,7 +20,7 @@ function formatRelativeTime(dateStr) {
     return formatDate(dateStr);
 }
 
-function formatDuration(ms) {
+export function formatDuration(ms) {
     if (ms < 1000) return `${ms}ms`;
     const seconds = ms / 1000;
     if (seconds < 60) return `${seconds.toFixed(2)}s`;
@@ -28,18 +28,18 @@ function formatDuration(ms) {
     return `${minutes.toFixed(2)}m`;
 }
 
-function truncate(str, maxLength) {
+export function truncate(str, maxLength) {
     if (str.length <= maxLength) return str;
     return str.substring(0, maxLength) + '...';
 }
 
-function escapeHtml(str) {
+export function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
 }
 
-function showError(message) {
+export function showError(message) {
     const alert = document.createElement('div');
     alert.className = 'alert alert-error';
     alert.textContent = message;
@@ -47,7 +47,7 @@ function showError(message) {
     setTimeout(() => alert.remove(), 5000);
 }
 
-function showSuccess(message) {
+export function showSuccess(message) {
     const alert = document.createElement('div');
     alert.className = 'alert alert-success';
     alert.textContent = message;
@@ -55,7 +55,7 @@ function showSuccess(message) {
     setTimeout(() => alert.remove(), 5000);
 }
 
-function loading(show = true) {
+export function loading(show = true) {
     const spinner = document.querySelector('.spinner');
     if (spinner) {
         spinner.style.display = show ? 'block' : 'none';

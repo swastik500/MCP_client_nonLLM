@@ -3,18 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCP Chat Shell - Deterministic Execution</title>
+    <title>MCP Client - Universal Interface</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/chat.css">
 </head>
 <body class="chat-page">
+    <!-- Login Modal (shown when not authenticated) -->
+    <div id="login-modal" class="login-modal hidden">
+        <div class="login-modal-content">
+            <h2>🔐 Authentication Required</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="modal-username">Username</label>
+                    <input type="text" id="modal-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="modal-password">Password</label>
+                    <input type="password" id="modal-password" required>
+                </div>
+                <div class="demo-credentials">
+                    <p><strong>Demo Credentials:</strong></p>
+                    <p>Admin: admin/admin | User: user/password | Guest: guest/guest</p>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <div id="login-error" class="error-message hidden"></div>
+            </form>
+        </div>
+    </div>
+
     <div id="header"></div>
 
     <div class="chat-container">
-        <!-- Left Sidebar -->
+        <!-- Left Sidebar - System Info & Tools -->
         <aside class="chat-sidebar">
             <div class="sidebar-section">
-                <h3>🟢 Active Session</h3>
+                <h3>🟢 System Status</h3>
                 <div class="session-info">
                     <div class="session-item">
                         <span class="label">Instance:</span>
@@ -26,41 +49,55 @@
                     </div>
                     <div class="session-item">
                         <span class="label">Status:</span>
-                        <span class="value status-active">READY</span>
+                        <span class="value status-active" id="system-status">LOADING</span>
+                    </div>
+                    <div class="session-item">
+                        <span class="label">User:</span>
+                        <span class="value" id="current-user">--</span>
                     </div>
                 </div>
             </div>
 
             <div class="sidebar-section">
-                <h3>📜 Command History</h3>
-                <div id="command-history" class="command-history"></div>
-            </div>
-
-            <div class="sidebar-section">
-                <h3>🗺️ Resource Map</h3>
+                <h3>📊 Resource Map</h3>
                 <div id="resource-map" class="resource-map">
                     <div class="resource-item">📡 <span id="server-count">0</span> Servers</div>
                     <div class="resource-item">🔧 <span id="tool-count">0</span> Tools</div>
                     <div class="resource-item">⚡ <span id="execution-count">0</span> Executions</div>
+                    <div class="resource-item">👥 <span id="user-count">--</span> Users</div>
                 </div>
+                <button class="btn btn-sm btn-secondary" onclick="refreshStats()">🔄 Refresh</button>
             </div>
 
             <div class="sidebar-section">
-                <h3>🛠️ Tool Definitions</h3>
-                <div id="tool-definitions" class="tool-definitions"></div>
+                <h3>📜 Command History</h3>
+                <div id="command-history" class="command-history"></div>
+                <button class="btn btn-sm btn-secondary" onclick="clearHistory()">Clear History</button>
             </div>
 
             <div class="sidebar-section">
-                <h3>📦 Loaded Tools</h3>
-                <div id="loaded-tools" class="loaded-tools"></div>
+                <h3>📡 Active Servers</h3>
+                <div id="active-servers" class="active-servers"></div>
+                <button class="btn btn-sm btn-primary" onclick="triggerDiscovery()">🔍 Discover</button>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>🛠️ Available Tools</h3>
+                <div class="tool-filter">
+                    <input type="text" id="tool-search" placeholder="Search tools..." onkeyup="filterTools()">
+                </div>
+                <div id="available-tools" class="available-tools"></div>
             </div>
         </aside>
 
         <!-- Main Chat Area -->
         <main class="chat-main">
             <div class="chat-header">
-                <h2>💬 Deterministic MCP Shell</h2>
+                <h2>💬 MCP Universal Interface</h2>
                 <div class="chat-actions">
+                    <button class="btn btn-sm btn-secondary" onclick="showToolsModal()">🔧 Tools</button>
+                    <button class="btn btn-sm btn-secondary" onclick="showServersModal()">📡 Servers</button>
+                    <button class="btn btn-sm btn-secondary" onclick="showAuditModal()">📋 Audit</button>
                     <button class="btn btn-sm btn-secondary" onclick="clearChat()">Clear</button>
                     <button class="btn btn-sm btn-secondary" onclick="exportChat()">Export</button>
                 </div>
@@ -71,8 +108,8 @@
                     <div class="message-icon">🤖</div>
                     <div class="message-content">
                         <strong>SYSTEM</strong>
-                        <p>MCP Client initialized. Schema-driven execution ready.</p>
-                        <p class="system-info">Zero code changes • No LLMs • Fully deterministic</p>
+                        <p>MCP Client Universal Interface initialized.</p>
+                        <p class="system-info">Schema-driven execution • No LLMs • Fully deterministic</p>
                     </div>
                 </div>
             </div>
@@ -81,11 +118,11 @@
                 <div class="input-wrapper">
                     <textarea 
                         id="chat-input" 
-                        placeholder="Enter command or natural language query..."
+                        placeholder="Enter command, natural language query, or use quick actions below..."
                         rows="3"
                     ></textarea>
                     <div class="input-actions">
-                        <span class="input-hint">CTRL + ENTER to execute | FOR suggestions</span>
+                        <span class="input-hint">CTRL + ENTER to execute | Type 'help' for commands</span>
                         <button class="btn btn-primary" onclick="sendMessage()">
                             EXECUTE ▶
                         </button>
@@ -93,9 +130,10 @@
                 </div>
                 <div class="quick-commands">
                     <button class="quick-cmd" onclick="useQuickCommand('list all tools')">📋 List Tools</button>
-                    <button class="quick-cmd" onclick="useQuickCommand('show servers')">📡 Show Servers</button>
+                    <button class="quick-cmd" onclick="useQuickCommand('show server status')">📡 Server Status</button>
                     <button class="quick-cmd" onclick="useQuickCommand('list files')">📁 List Files</button>
-                    <button class="quick-cmd" onclick="useQuickCommand('execute last command')">⚡ Repeat Last</button>
+                    <button class="quick-cmd" onclick="useQuickCommand('take screenshot')">📸 Screenshot</button>
+                    <button class="quick-cmd" onclick="useQuickCommand('help')">❓ Help</button>
                 </div>
             </div>
         </main>
@@ -195,9 +233,43 @@
         </aside>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/chat.js"></script>
+    <!-- Modals -->
+    <div id="tools-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔧 Available Tools</h3>
+                <button class="modal-close" onclick="closeModal('tools-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="tools-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="servers-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📡 MCP Servers</h3>
+                <button class="modal-close" onclick="closeModal('servers-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="servers-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="audit-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📋 Execution Audit</h3>
+                <button class="modal-close" onclick="closeModal('audit-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="audit-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/chat.js"></script>
 </body>
 </html>

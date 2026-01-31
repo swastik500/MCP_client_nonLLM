@@ -29,9 +29,9 @@ logger = logging.getLogger(__name__)
 
 class RuleDecision(Enum):
     """Possible rule engine decisions."""
-    ALLOW = "allow"
-    DENY = "deny"
-    MODIFY = "modify"
+    ALLOW = "ALLOW"
+    DENY = "DENY"
+    MODIFY = "MODIFY"
 
 
 @dataclass

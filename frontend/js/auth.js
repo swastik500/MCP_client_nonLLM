@@ -1,12 +1,11 @@
-// Authentication utilities
+// Authentication utilities - ES6 Module
 
-const API_BASE = '/api/v1';
-const TOKEN_KEY = 'mcp_token';
-const USER_KEY = 'mcp_user';
+const TOKEN_KEY = 'token';
+const USER_KEY = 'user';
 
 // Login function
-async function login(username, password) {
-    const response = await fetch(`${API_BASE}/auth/login`, {
+export async function login(username, password) {
+    const response = await fetch('/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -18,43 +17,54 @@ async function login(username, password) {
     }
 
     const data = await response.json();
+    
+    // Store auth data
     localStorage.setItem(TOKEN_KEY, data.access_token);
     localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    
     return data;
 }
 
-// Logout function
-function logout() {
+// Logout user
+export function logout() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     window.location.href = 'login.html';
 }
 
 // Check if authenticated
-function isAuthenticated() {
+export function isAuthenticated() {
     return !!localStorage.getItem(TOKEN_KEY);
 }
 
 // Get current user
-function getCurrentUser() {
+export function getCurrentUser() {
     const userStr = localStorage.getItem(USER_KEY);
-    return userStr ? JSON.parse(userStr) : null;
+    if (!userStr || userStr === 'undefined' || userStr === 'null') {
+        return null;
+    }
+    try {
+        return JSON.parse(userStr);
+    } catch (error) {
+        console.error('Failed to parse user data:', error);
+        return null;
+    }
 }
 
 // Get auth token
-function getToken() {
+export function getToken() {
     return localStorage.getItem(TOKEN_KEY);
 }
 
 // Protect page (redirect to login if not authenticated)
-function protectPage() {
+export function protectPage() {
     if (!isAuthenticated()) {
         window.location.href = 'login.html';
     }
 }
 
 // Render header
-function renderHeader() {
+export function renderHeader() {
     const header = document.getElementById('header');
     if (!header) return;
 
@@ -80,7 +90,7 @@ function renderHeader() {
                     <div class="user-name">${user?.username || 'User'}</div>
                     <div class="user-role">${user?.role || 'guest'}</div>
                 </div>
-                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                <button class="btn btn-secondary" onclick="window.logout()">Logout</button>
             </div>
         </div>
     `;

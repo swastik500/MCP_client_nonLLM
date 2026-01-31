@@ -1,9 +1,14 @@
-// API client utilities
+// API client utilities - ES6 Module
 
-const API_BASE = '/api/v1';
+export const API_BASE = '/api/v1';
+
+// Get auth token
+function getToken() {
+    return localStorage.getItem('token');
+}
 
 // Generic API call with auth
-async function apiCall(endpoint, options = {}) {
+export async function apiCall(endpoint, options = {}) {
     const token = getToken();
     const headers = {
         'Content-Type': 'application/json',
@@ -20,7 +25,7 @@ async function apiCall(endpoint, options = {}) {
     });
 
     if (response.status === 401) {
-        logout();
+        // Handle logout in the calling module
         throw new Error('Unauthorized');
     }
 
@@ -33,44 +38,44 @@ async function apiCall(endpoint, options = {}) {
 }
 
 // Execute API
-async function executeCommand(input, overrides = null) {
+export async function executeCommand(input, overrides = null) {
     return await apiCall('/execute', {
         method: 'POST',
-        body: JSON.stringify({ input, overrides })
+        body: JSON.stringify({ input_text: input, overrides })
     });
 }
 
 // Tools API
-async function listTools(serverId = null) {
+export async function listTools(serverId = null) {
     const query = serverId ? `?server_id=${serverId}` : '';
     return await apiCall(`/tools${query}`);
 }
 
-async function getToolSchema(toolId) {
+export async function getToolSchema(toolId) {
     return await apiCall(`/tools/${toolId}/schema`);
 }
 
 // Servers API
-async function listServers() {
+export async function listServers() {
     return await apiCall('/servers');
 }
 
-async function discoverServers() {
+export async function discoverServers() {
     return await apiCall('/servers/discover', {
         method: 'POST'
     });
 }
 
-async function getServerStats(serverId) {
+export async function getServerStats(serverId) {
     return await apiCall(`/servers/${serverId}/stats`);
 }
 
 // Audit API
-async function listAuditLogs(params = {}) {
+export async function listAuditLogs(params = {}) {
     const query = new URLSearchParams(params).toString();
     return await apiCall(`/audit/logs${query ? '?' + query : ''}`);
 }
 
-async function getAuditDetail(executionId) {
+export async function getAuditDetail(executionId) {
     return await apiCall(`/audit/logs/${executionId}`);
 }

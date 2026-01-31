@@ -43,9 +43,9 @@ class ExecutionStatus(enum.Enum):
 
 class RuleDecision(enum.Enum):
     """Rule engine decisions."""
-    ALLOW = "allow"
-    DENY = "deny"
-    MODIFY = "modify"
+    ALLOW = "ALLOW"
+    DENY = "DENY"
+    MODIFY = "MODIFY"
 
 
 class MCPServer(Base):

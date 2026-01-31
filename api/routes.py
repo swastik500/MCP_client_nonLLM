@@ -198,7 +198,7 @@ async def execute(
         intent=result.intent.intent if result.intent else None,
         intent_confidence=result.intent.confidence if result.intent else None,
         forced_intent=result.intent.is_forced if result.intent else False,
-        rule_decision=result.rule_result.decision if result.rule_result else None,
+        rule_decision=result.rule_result.decision if result.rule_result and result.rule_result.decision else None,
         rule_context=result.rule_result.to_dict() if result.rule_result else None,
         tool_name=result.tool_name,
         execution_parameters=result.parameters,
@@ -210,6 +210,10 @@ async def execute(
         error_message=result.error,
     )
     session.add(audit_log)
+    
+    # Debug print to verify enum type
+    print(f"DEBUG: rule_decision type={type(audit_log.rule_decision)}, value={audit_log.rule_decision}")
+    
     await session.flush()
     
     return ExecuteResponse(

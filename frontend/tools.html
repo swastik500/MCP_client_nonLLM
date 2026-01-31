@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools - MCP Client</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header id="header"></header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Tools</h1>
+                <p id="tools-count">Browse and explore available MCP tools</p>
+            </div>
+
+            <div class="card">
+                <div class="filters">
+                    <input type="text" id="search" placeholder="🔍 Search tools..." class="search-input">
+                    <select id="server-filter" class="select-input">
+                        <option value="all">All Servers</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="tools-grid" class="tools-grid"></div>
+        </main>
+    </div>
+
+    <!-- Schema Modal -->
+    <div id="schema-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modal-tool-name"></h2>
+                    <p id="modal-tool-desc"></p>
+                </div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <h3>Input Schema</h3>
+                <pre id="modal-schema" class="code-block"></pre>
+                <div id="modal-params"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/tools.js"></script>
+</body>
+</html>

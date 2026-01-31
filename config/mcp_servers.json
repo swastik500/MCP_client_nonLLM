@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@automatalabs/mcp-server-playwright"
+      ],
+      "description": "Browser automation with Playwright",
+      "enabled": true
+    },
+    "filesystem": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:/Users/Swastik/Desktop"
+      ],
+      "description": "File system operations",
+      "enabled": true
+    }
+  }
+}

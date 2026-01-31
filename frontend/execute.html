@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Execute - MCP Client</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header id="header"></header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Execute Tool</h1>
+                <p>Run natural language commands through the MCP pipeline</p>
+            </div>
+
+            <div class="card">
+                <form id="execute-form">
+                    <div class="form-group">
+                        <label for="input">Natural Language Input</label>
+                        <textarea id="input" rows="5" placeholder="Enter your command in natural language..."></textarea>
+                        <div class="char-count" id="char-count">0 characters</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="execute-btn">
+                            <span class="btn-text">⚡ Execute</span>
+                            <span class="btn-spinner" style="display: none;">Executing...</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="example-commands">
+                    <p class="label">Example Commands:</p>
+                    <div class="command-chips" id="examples"></div>
+                </div>
+            </div>
+
+            <div id="error-alert" class="alert alert-error" style="display: none;"></div>
+
+            <div id="result-card" class="card" style="display: none;">
+                <div class="result-header">
+                    <div class="result-status">
+                        <span class="status-icon" id="status-icon"></span>
+                        <div>
+                            <h2 id="status-title"></h2>
+                            <p class="request-id" id="request-id"></p>
+                        </div>
+                    </div>
+                    <div class="execution-time" id="execution-time"></div>
+                </div>
+
+                <div class="metadata-grid" id="metadata-grid"></div>
+
+                <div id="result-content"></div>
+            </div>
+
+            <div class="card info-card">
+                <h3>How It Works</h3>
+                <p>Your input goes through an 8-stage deterministic pipeline:</p>
+                <ol>
+                    <li>Entity Extraction (spaCy NER)</li>
+                    <li>Intent Classification (forced overrides + ML)</li>
+                    <li>Rule Evaluation (permissions & thresholds)</li>
+                    <li>Tool Selection (intent mapping)</li>
+                    <li>Parameter Building (schema-driven)</li>
+                    <li>Schema Validation (JSON Schema)</li>
+                    <li>Tool Execution (MCP transport)</li>
+                    <li>Response Formatting</li>
+                </ol>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/execute.js"></script>
+</body>
+</html>

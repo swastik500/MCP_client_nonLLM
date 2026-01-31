@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Log - MCP Client</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header id="header"></header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Audit Log</h1>
+                <p id="audit-count"></p>
+            </div>
+
+            <div class="stats-grid-3">
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <p class="stat-label">Success</p>
+                            <p class="stat-value stat-success" id="success-count">0</p>
+                        </div>
+                        <div class="stat-icon">✅</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <p class="stat-label">Failed</p>
+                            <p class="stat-value stat-error" id="failed-count">0</p>
+                        </div>
+                        <div class="stat-icon">❌</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <p class="stat-label">Avg Time</p>
+                            <p class="stat-value" id="avg-time">0ms</p>
+                        </div>
+                        <div class="stat-icon">⏱️</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="filters">
+                    <input type="text" id="search" placeholder="🔍 Search executions..." class="search-input">
+                    <select id="status-filter" class="select-input">
+                        <option value="all">All Status</option>
+                        <option value="success">Success Only</option>
+                        <option value="failed">Failed Only</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card table-container">
+                <table class="audit-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Input</th>
+                            <th>Tool</th>
+                            <th>Time</th>
+                            <th>When</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="audit-tbody"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="result-status">
+                    <span class="status-icon" id="detail-icon"></span>
+                    <div>
+                        <h2>Execution Details</h2>
+                        <p id="detail-id"></p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeDetailModal()">×</button>
+            </div>
+            <div class="modal-body" id="detail-body"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDetailModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/audit.js"></script>
+</body>
+</html>

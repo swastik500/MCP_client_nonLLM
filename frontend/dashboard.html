@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MCP Client</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header id="header"></header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>Monitor your MCP client system</p>
+            </div>
+
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <p class="stat-label">MCP Servers</p>
+                            <p class="stat-value" id="servers-stat">0 / 0</p>
+                            <p class="stat-subtext">Connected</p>
+                        </div>
+                        <div class="stat-icon stat-icon-blue">📡</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <p class="stat-label">Available Tools</p>
+                            <p class="stat-value" id="tools-stat">0</p>
+                            <p class="stat-subtext">Discovered</p>
+                        </div>
+                        <div class="stat-icon stat-icon-green">🔧</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <p class="stat-label">Recent Executions</p>
+                            <p class="stat-value" id="executions-stat">0</p>
+                            <p class="stat-subtext">Last 24 hours</p>
+                        </div>
+                        <div class="stat-icon stat-icon-purple">📊</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <p class="stat-label">Success Rate</p>
+                            <p class="stat-value" id="success-stat">0%</p>
+                            <p class="stat-subtext">Recent operations</p>
+                        </div>
+                        <div class="stat-icon stat-icon-emerald">📈</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>MCP Servers</h2>
+                        <a href="servers.html" class="link">View all →</a>
+                    </div>
+                    <div id="servers-list" class="list"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Recent Executions</h2>
+                        <a href="audit.html" class="link">View all →</a>
+                    </div>
+                    <div id="executions-list" class="list"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Quick Actions</h2>
+                <div class="quick-actions">
+                    <a href="execute.html" class="action-card">
+                        <div class="action-icon">⚡</div>
+                        <h3>Execute Tool</h3>
+                        <p>Run natural language commands</p>
+                    </a>
+                    <a href="tools.html" class="action-card">
+                        <div class="action-icon">🔧</div>
+                        <h3>Browse Tools</h3>
+                        <p>Explore available MCP tools</p>
+                    </a>
+                    <a href="servers.html" class="action-card">
+                        <div class="action-icon">📡</div>
+                        <h3>Manage Servers</h3>
+                        <p>Configure MCP servers</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

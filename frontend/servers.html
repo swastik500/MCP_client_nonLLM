@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servers - MCP Client</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header id="header"></header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>MCP Servers</h1>
+                    <p id="server-stats"></p>
+                </div>
+                <button id="discover-btn" class="btn btn-primary">
+                    <span class="btn-text">🔄 Discover Tools</span>
+                    <span class="btn-spinner" style="display: none;">Discovering...</span>
+                </button>
+            </div>
+
+            <div id="discovery-alert" class="alert alert-success" style="display: none;"></div>
+
+            <div id="servers-grid" class="grid-2"></div>
+
+            <div class="card info-card">
+                <h3>Adding New Servers</h3>
+                <p>To add a new MCP server, edit <code>config/mcp_servers.json</code> and restart the application.</p>
+                <p><strong>No code changes required</strong> - the system will automatically discover and register all tools from the new server.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/servers.js"></script>
+</body>
+</html>

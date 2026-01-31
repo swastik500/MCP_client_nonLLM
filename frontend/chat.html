@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Chat Shell - Deterministic Execution</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chat.css">
+</head>
+<body class="chat-page">
+    <div id="header"></div>
+
+    <div class="chat-container">
+        <!-- Left Sidebar -->
+        <aside class="chat-sidebar">
+            <div class="sidebar-section">
+                <h3>🟢 Active Session</h3>
+                <div class="session-info">
+                    <div class="session-item">
+                        <span class="label">Instance:</span>
+                        <span class="value" id="session-id">MCP-CLIENT-v1.0.4</span>
+                    </div>
+                    <div class="session-item">
+                        <span class="label">Latency:</span>
+                        <span class="value" id="latency">-- ms</span>
+                    </div>
+                    <div class="session-item">
+                        <span class="label">Status:</span>
+                        <span class="value status-active">READY</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>📜 Command History</h3>
+                <div id="command-history" class="command-history"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>🗺️ Resource Map</h3>
+                <div id="resource-map" class="resource-map">
+                    <div class="resource-item">📡 <span id="server-count">0</span> Servers</div>
+                    <div class="resource-item">🔧 <span id="tool-count">0</span> Tools</div>
+                    <div class="resource-item">⚡ <span id="execution-count">0</span> Executions</div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>🛠️ Tool Definitions</h3>
+                <div id="tool-definitions" class="tool-definitions"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>📦 Loaded Tools</h3>
+                <div id="loaded-tools" class="loaded-tools"></div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <div class="chat-header">
+                <h2>💬 Deterministic MCP Shell</h2>
+                <div class="chat-actions">
+                    <button class="btn btn-sm btn-secondary" onclick="clearChat()">Clear</button>
+                    <button class="btn btn-sm btn-secondary" onclick="exportChat()">Export</button>
+                </div>
+            </div>
+
+            <div id="chat-messages" class="chat-messages">
+                <div class="system-message">
+                    <div class="message-icon">🤖</div>
+                    <div class="message-content">
+                        <strong>SYSTEM</strong>
+                        <p>MCP Client initialized. Schema-driven execution ready.</p>
+                        <p class="system-info">Zero code changes • No LLMs • Fully deterministic</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="chat-input" 
+                        placeholder="Enter command or natural language query..."
+                        rows="3"
+                    ></textarea>
+                    <div class="input-actions">
+                        <span class="input-hint">CTRL + ENTER to execute | FOR suggestions</span>
+                        <button class="btn btn-primary" onclick="sendMessage()">
+                            EXECUTE ▶
+                        </button>
+                    </div>
+                </div>
+                <div class="quick-commands">
+                    <button class="quick-cmd" onclick="useQuickCommand('list all tools')">📋 List Tools</button>
+                    <button class="quick-cmd" onclick="useQuickCommand('show servers')">📡 Show Servers</button>
+                    <button class="quick-cmd" onclick="useQuickCommand('list files')">📁 List Files</button>
+                    <button class="quick-cmd" onclick="useQuickCommand('execute last command')">⚡ Repeat Last</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar - Pipeline Inspector -->
+        <aside class="pipeline-inspector">
+            <div class="inspector-header">
+                <h3>🔍 Pipeline Inspector</h3>
+                <div id="pipeline-status" class="pipeline-status">READY</div>
+            </div>
+
+            <div class="inspector-body">
+                <div class="pipeline-stage" id="stage-nlp">
+                    <div class="stage-icon">📝</div>
+                    <div class="stage-content">
+                        <h4>NLP / PARSE PHASE</h4>
+                        <div class="stage-details">
+                            <span class="detail-label">Tokens:</span>
+                            <span id="nlp-tokens">0</span>
+                            <span class="detail-label">Model:</span>
+                            <span id="nlp-model">spaCy-v3</span>
+                        </div>
+                        <div class="stage-result" id="nlp-result"></div>
+                    </div>
+                </div>
+
+                <div class="pipeline-stage" id="stage-intent">
+                    <div class="stage-icon">🎯</div>
+                    <div class="stage-content">
+                        <h4>INTENT MATCHING</h4>
+                        <div class="stage-details">
+                            <span class="detail-label">Rule:</span>
+                            <span id="intent-rule">--</span>
+                        </div>
+                        <div class="stage-result" id="intent-result"></div>
+                    </div>
+                </div>
+
+                <div class="pipeline-stage" id="stage-validation">
+                    <div class="stage-icon">✓</div>
+                    <div class="stage-content">
+                        <h4>SCHEMA VALIDATION</h4>
+                        <div class="stage-details">
+                            <span class="detail-label">Validator:</span>
+                            <span id="validation-type">JSON Schema</span>
+                        </div>
+                        <div class="stage-result" id="validation-result"></div>
+                    </div>
+                </div>
+
+                <div class="pipeline-stage" id="stage-execution">
+                    <div class="stage-icon">⚡</div>
+                    <div class="stage-content">
+                        <h4>EXECUTION LOGIC</h4>
+                        <div class="stage-details">
+                            <span class="detail-label">Server:</span>
+                            <span id="exec-server">--</span>
+                        </div>
+                        <div class="stage-result" id="exec-result"></div>
+                    </div>
+                </div>
+
+                <div class="pipeline-stage" id="stage-response">
+                    <div class="stage-icon">📦</div>
+                    <div class="stage-content">
+                        <h4>RESPONSE PAYLOAD</h4>
+                        <div class="stage-details">
+                            <span class="detail-label">Status:</span>
+                            <span id="response-status">--</span>
+                        </div>
+                        <div class="stage-result" id="response-result"></div>
+                    </div>
+                </div>
+
+                <div class="context-metadata">
+                    <h4>CONTEXT METADATA</h4>
+                    <div class="metadata-grid">
+                        <div class="meta-item">
+                            <span class="meta-label">Server ID:</span>
+                            <span class="meta-value" id="meta-server">--</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Auth Mode:</span>
+                            <span class="meta-value" id="meta-auth">Bearer/JWT</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Strict Mode:</span>
+                            <span class="meta-value status-enabled">ENABLED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pipeline-version">
+                    Pipeline v2.1.2-stable
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>

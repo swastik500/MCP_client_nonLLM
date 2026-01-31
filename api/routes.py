@@ -210,10 +210,6 @@ async def execute(
         error_message=result.error,
     )
     session.add(audit_log)
-    
-    # Debug print to verify enum type
-    print(f"DEBUG: rule_decision type={type(audit_log.rule_decision)}, value={audit_log.rule_decision}")
-    
     await session.flush()
     
     return ExecuteResponse(

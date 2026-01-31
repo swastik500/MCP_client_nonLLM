@@ -108,8 +108,13 @@ async function loadInitialData() {
         // Load tools
         await loadTools();
         
-        // Load audit logs (if admin)
-        await loadAuditLogs();
+        // Load audit logs (only if authenticated)
+        if (isAuthenticated()) {
+            await loadAuditLogs();
+        } else {
+            const execCountEl = document.getElementById('execution-count');
+            if (execCountEl) execCountEl.textContent = 'N/A';
+        }
         
         const duration = Date.now() - startTime;
         document.getElementById('latency').textContent = `${duration} ms`;
@@ -339,21 +344,22 @@ function addSystemMessage(message, type = 'info') {
 function addSystemResponse(result) {
     const messagesContainer = document.getElementById('chat-messages');
     const messageEl = document.createElement('div');
-    messageEl.className = `message ${result.status === 'success' ? 'success-message' : 'error-message'}`;
+    const isSuccess = result.success === true;
+    messageEl.className = `message ${isSuccess ? 'success-message' : 'error-message'}`;
     
-    const icon = result.status === 'success' ? '✅' : '❌';
-    const statusText = result.status.toUpperCase();
+    const icon = isSuccess ? '✅' : '❌';
+    const statusText = isSuccess ? 'SUCCESS' : 'ERROR';
     
     messageEl.innerHTML = `
         <div class="message-icon">${icon}</div>
         <div class="message-content">
             <strong>[EXECUTION RESULT]</strong>
-            <div class="execution-result ${result.status === 'error' ? 'error' : ''}">
+            <div class="execution-result ${!isSuccess ? 'error' : ''}">
                 <div class="result-header">
                     <span>Tool Execution</span>
-                    <span class="result-status ${result.status === 'error' ? 'error' : 'success'}">${statusText}</span>
+                    <span class="result-status ${!isSuccess ? 'error' : 'success'}">${statusText}</span>
                 </div>
-                ${result.status === 'success' ? `
+                ${isSuccess ? `
                     <div class="code-block">
                         <pre>${JSON.stringify(result.result, null, 2)}</pre>
                     </div>
@@ -694,7 +700,8 @@ function updatePipeline(result) {
     const execServer = document.getElementById('exec-server');
     const execResult = document.getElementById('exec-result');
     
-    if (execStage) execStage.classList.add(result.status === 'success' ? 'success' : 'error');
+    const isSuccess = result.success === true;
+    if (execStage) execStage.classList.add(isSuccess ? 'success' : 'error');
     if (execServer) execServer.textContent = result.server_name || '--';
     if (execResult) execResult.textContent = `POST ${result.tool_name || 'unknown'}`;
     
@@ -703,9 +710,9 @@ function updatePipeline(result) {
     const responseStatus = document.getElementById('response-status');
     const responseResult = document.getElementById('response-result');
     
-    if (responseStage) responseStage.classList.add(result.status === 'success' ? 'success' : 'error');
-    if (responseStatus) responseStatus.textContent = result.status === 'success' ? '200 OK' : '500 ERROR';
-    if (responseResult) responseResult.textContent = result.status === 'success' ? 'Success' : (result.error || 'Failed');
+    if (responseStage) responseStage.classList.add(isSuccess ? 'success' : 'error');
+    if (responseStatus) responseStatus.textContent = isSuccess ? '200 OK' : '500 ERROR';
+    if (responseResult) responseResult.textContent = isSuccess ? 'Success' : (result.error || 'Failed');
     
     // Metadata
     const metaServer = document.getElementById('meta-server');

@@ -160,16 +160,42 @@ class ForcedOverrideRegistry:
             priority=200
         ),
         ForcedOverride(
-            pattern="list tools",
-            pattern_type="contains",
+            pattern=r"(list|show|get)\s+(all\s+)?tools?",
+            pattern_type="regex",
             target_intent="list_tools",
             priority=200
         ),
         ForcedOverride(
-            pattern="list servers",
-            pattern_type="contains",
+            pattern=r"(list|show|get)\s+(all\s+)?servers?",
+            pattern_type="regex",
             target_intent="list_servers",
             priority=200
+        ),
+        ForcedOverride(
+            pattern=r"(show|get|check)\s+(server\s+)?status",
+            pattern_type="regex",
+            target_intent="list_servers",
+            priority=200
+        ),
+        
+        # Browser automation (Playwright)
+        ForcedOverride(
+            pattern=r"(navigate|go)\s+(to\s+)?(\w+|https?://)",
+            pattern_type="regex",
+            target_intent="browser_navigate",
+            priority=150
+        ),
+        ForcedOverride(
+            pattern=r"(click|press|tap)\s+(on\s+)?",
+            pattern_type="regex",
+            target_intent="browser_click",
+            priority=150
+        ),
+        ForcedOverride(
+            pattern=r"(screenshot|capture|snap)",
+            pattern_type="regex",
+            target_intent="browser_screenshot",
+            priority=150
         ),
     ]
     

@@ -27,8 +27,7 @@ from config.settings import settings
 logger = logging.getLogger(__name__)
 
 
-class RuleDecision(Enum):
-    """Possible rule engine decisions."""
+class RuleDecision(str, Enum):
     ALLOW = "ALLOW"
     DENY = "DENY"
     MODIFY = "MODIFY"

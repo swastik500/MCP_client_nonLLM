@@ -262,6 +262,29 @@ class ValueConverter:
     Converts entity values to the correct type for parameters.
     """
     
+    @staticmethod
+    def _normalize_url(url: str) -> str:
+        """
+        Normalize a URL by adding protocol if missing.
+        
+        Examples:
+            google.com -> https://google.com
+            google -> https://google.com
+            https://google.com -> https://google.com (unchanged)
+        """
+        url = url.strip()
+        
+        # Already has protocol
+        if url.startswith(('http://', 'https://', 'ftp://', 'file://')):
+            return url
+        
+        # Add .com if it looks like a domain without TLD
+        if '.' not in url and not url.startswith('localhost'):
+            url = f"{url}.com"
+        
+        # Add https:// protocol
+        return f"https://{url}"
+    
     @classmethod
     def convert(cls, value: str, param_def: Dict[str, Any]) -> Any:
         """
@@ -277,6 +300,14 @@ class ValueConverter:
         param_type = param_def.get("type", "string")
         
         if param_type == "string":
+            # Check if this is a URL parameter and normalize if needed
+            param_format = param_def.get("format")
+            param_desc = param_def.get("description", "").lower()
+            
+            # Detect URL parameters
+            if param_format == "uri" or "url" in param_desc or "uri" in param_desc:
+                value = cls._normalize_url(value)
+            
             return str(value)
         
         elif param_type == "integer":
@@ -430,6 +461,26 @@ class SchemaExecutor:
                     continue
                 except (ValueError, TypeError) as e:
                     logger.debug(f"Failed to convert entity for {param_name}: {e}")
+            
+            # Special handling for URL parameters - extract from tokens
+            param_format = param_def.get("format")
+            param_desc = param_def.get("description", "").lower()
+            if (param_name == "url" or param_format == "uri" or "url" in param_desc):
+                # Skip common action verbs
+                skip_verbs = {'navigate', 'go', 'open', 'visit', 'browse', 'to', 'show', 'get', 'fetch'}
+                
+                # Look for URL-like tokens (domains, etc.)
+                for token in entities.tokens:
+                    # Skip action verbs and short words
+                    if token.lower() in skip_verbs or len(token) < 3:
+                        continue
+                    # Found a potential URL/domain in tokens
+                    url_candidate = self.converter._normalize_url(token)
+                    parameters[param_name] = url_candidate
+                    mapping_log[param_name] = f"token_url:{token}"
+                    break
+                if param_name in parameters:
+                    continue
             
             # Try noun chunks for free-text parameters
             if param_name in ("query", "content", "text", "message", "description"):

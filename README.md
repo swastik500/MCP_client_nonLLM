@@ -366,17 +366,8 @@ python -m json.tool mcp_servers.json
 - Verify FastAPI is serving static files
 - Ensure all JS files are loaded (auth.js, api.js, utils.js)
 
-## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new features
-4. Submit a pull request
 
-## License
 
-MIT License
-
----
 
 **Zero code changes • No LLMs • Fully deterministic**
